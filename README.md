@@ -1,0 +1,1 @@
+# mvn-adapters-meal-openmensa
