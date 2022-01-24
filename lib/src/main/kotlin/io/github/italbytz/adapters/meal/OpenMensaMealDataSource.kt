@@ -7,6 +7,8 @@ import io.github.italbytz.ports.meal.Additives
 import io.github.italbytz.ports.meal.Allergens
 import io.github.italbytz.ports.meal.Category
 import io.github.italbytz.ports.meal.Meal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class OpenMensaMealDataSource(val mensa: Long, val date: java.time.LocalDate) : io.github.italbytz.ports.common.DataSource<Int,Meal> {
 
@@ -18,8 +20,10 @@ class OpenMensaMealDataSource(val mensa: Long, val date: java.time.LocalDate) : 
     }
 
     override suspend fun retrieveAll(): List<Meal> {
-        val result = api.getMeals(mensa, date.format(formatter)).execute().body()!!
-        return result.map { it.toMeal() }
+        return withContext(Dispatchers.IO) {
+            api.getMeals(mensa, date.format(formatter)).execute().body()!!
+                .map { it.toMeal() }
+        }
     }
 }
 
